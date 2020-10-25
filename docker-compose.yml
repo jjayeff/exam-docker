@@ -1,0 +1,29 @@
+version: '3.5'
+services:
+  chat-px-api:
+    container_name: chat-px-api
+    image: jjayeff/chat-px-api:v1.0.0
+    ports:
+      - 4000:4000
+    environment:
+      - MONGO_DB_URL=mongodb://mongo:27017/docker-node-mongo
+    restart: unless-stopped
+    external_links:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+
+  chat-px-app:
+    container_name: chat-px-app
+    image: jjayeff/chat-px-app:v1.0.1
+    ports:
+      - 80:3000
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_BACKEND_API=http://localhost:4000/graphql
+      - REACT_APP_SOCKET_API=ws://localhost:4000/graphql
+    restart: unless-stopped
